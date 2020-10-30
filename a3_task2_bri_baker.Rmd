@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(lubridate)
+library(zoo)
 ```
 
 ## BEFORE YOU START: Save a renamed copy of this .Rmd
@@ -57,8 +58,12 @@ Make sure to `View()` the resulting data frame (remember: run `View()` in the Co
 
 ```{r}
 # Your code here: 
+sw_split_name <- starwars %>% # start with starwars
+  separate(col = name, # take column 'name'
+           into = c("name1", "name2"), # split in 2
+           sep = "-") #split at '-'
 
-
+# The name in Row 49 is truncated after the second dash
 ```
 
 #### 1B. Follow me
@@ -91,7 +96,12 @@ Make sure to `View()` the resulting data frame (remember: run `View()` in the Co
 
 ```{r}
 # Your code here:
-
+sw_skin_sep <- starwars %>% # start with starwars
+  separate(col = skin_color, # seperate 'skin_color'
+           into = c("skin_1", "skin_2"), # into 2 columns
+           sep = ",", # split at comma
+           extra = "merge", #merge all after first comma into second column
+           remove = F) #keep initial 'skin_color'
 
 ```
 
@@ -113,7 +123,7 @@ Check the output after running the code.
 mpg_make_model <- mpg %>% # Start with mpg
   unite(col = make_model, # Create a new column called 'make_model'
         c(manufacturer, model), # That combines the manufacturer & model column
-        sep = "HEY!" # Puts "HEY!" between the pieces (default is underscore)
+        sep = ": " # Puts "HEY!" between the pieces (default is underscore)
         ) 
 
 # Feel free to try different separators in the `sep = ""` argument above.
@@ -127,7 +137,11 @@ In the code chunk below, starting from the `mpg` data create a new data frame ca
 
 ```{r}
 # Your code here: 
-
+mpg_model_class <- mpg %>% # start with mpg
+  unite(col = "model_class", # make a new column "model_class"
+        c("model", "class"), # that combines "model" and "class"
+        sep = "-", # seperate with a "-"
+        remove = F) # keep original attributes
 
 ```
 
@@ -157,8 +171,11 @@ In the code chunk below, use `ymd()` to convert a date that you choose in `YYYY-
 
 ```{r}
 # Your code here: 
+ymd("2020-10-30") #YYYY-MM-DD to YYYY-MM-DD
 
+ymd("2020/10/30") #YYYY/MM/DD to YYYY-MM-DD
 
+ymd("20201030") #YYYYMMDD to YYYY-MM-DD
 ```
 
 #### 3B. Follow me
@@ -182,7 +199,10 @@ In the code chunk below, create a vector (using `c()`, as above) stored as `some
 
 ```{r}
 # Your code here: 
+some_dates <- c(11061972, 02142007, 01301843) #create vector
+some_dates_converted <- mdy(some_dates) # convert dates to YYYY-MM-DD
 
+class(some_dates_converted) #check class
 
 ```
 
@@ -226,7 +246,14 @@ Starting from the `lakers` dataset, create a new dataset called `gasol_hookshots
 
 ```{r}
 # Your code here: 
-
+gasol_hookshots <- lakers %>%  # start with lakers
+  filter(player == "Pau Gasol" , #filter for Pau and hookshot
+         type == "hook") %>% 
+  mutate(date_new = ymd(date), # make new column with re-formatted date, classified "Date"
+         month_new = month(date_new), # make new column for month
+         year_new = year(date_new)) %>% # make new column for year
+  group_by(month_new) %>% # do not need to filter further because already the desired season
+  count(month_new) # create count table
 
 ```
 
@@ -276,7 +303,11 @@ Note: If you add another condition within `case_when()` that is `TRUE ~ "some th
 
 ```{r}
 # Your code here: 
-
+storms_danger <- storms %>% # start with storms
+  mutate(danger = case_when( # add new column "danger"
+    status == "hurricane" ~ "high", # danger when status is high
+    TRUE ~ "moderate" # danger at other status
+  ))
 
 ```
 
