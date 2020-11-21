@@ -73,7 +73,7 @@ There are other options (arguments within the function) to extend what you can d
 - Use `extra = "merge"` to split at the first separator, but merge everything following into the second column
 - Use `remove = FALSE` to keep the original column (default is to remove it)
 
-Run the code below, and check the output, to see how it works: 
+Run the code below, and check the output, to see how it works : 
 
 ```{r}
 # Run this code: 
